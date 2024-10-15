@@ -1,3 +1,29 @@
+# 📝 React Todo List
+
+![Project Screenshot](./public/images/Screenshot%202024-10-15%20213544.png)
+
+A simple and functional Todo List application built with React, allowing you to manage your daily tasks efficiently.
+
+## ✨ Features
+
+- 🆕 Add new tasks
+- 🗑️ Delete tasks
+- ✅ Toggle task status (completed / not completed)
+- 🔍 Filter tasks based on status
+
+## 🚀 Getting Started
+
+Follow these steps to run this project on your local machine:
+
+### Prerequisites
+
+- Node.js (version 12 or higher)
+- npm or yarn
+
+### Installation and Running
+
+1. Clone the repository:
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
