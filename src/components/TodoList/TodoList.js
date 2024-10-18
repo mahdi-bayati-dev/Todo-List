@@ -1,108 +1,91 @@
-import React, { Component } from 'react'
-import Header from './Header'
-import Todo from './Todo'
+import React, { useState } from 'react';
+import Header from './Header';
+import Todo from './Todo';
 
-export default class TodoList extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            todos: [],
-            todoTitle: '',
-            status: 'all'
-        }
+export default function TodoList() {
+    const [todos, setTodos] = useState([]);
+    const [todoTitle, setTodoTitle] = useState('');
+    const [status, setState] = useState('all');
 
-        this.addTodo = this.addTodo.bind(this)
-        this.removeTodo = this.removeTodo.bind(this)
-        this.editTodo = this.editTodo.bind(this)
-        this.todoTitleHandler = this.todoTitleHandler.bind(this)
-        this.statusHandler = this.statusHandler.bind(this)
-    }
+    const todoTitleHandler = (event) => {
+        setTodoTitle(event.target.value);
+    };
 
-    todoTitleHandler(event) {
-        this.setState({
-            todoTitle: event.target.value
-        })
-    }
+    const statusHandler = (event) => {
+        setState(event.target.value);
+    };
 
-    statusHandler(event) {
-        this.setState({
-            status: event.target.value
-        })
-    }
-
-    addTodo(event) {
-        event.preventDefault()
-        if (this.state.todoTitle.trim() !== '') {
+    const addTodo = (event) => {
+        event.preventDefault();
+        if (todoTitle.trim() !== '') {
             let newTodoObj = {
-                id: this.state.todos.length + 1,
-                title: this.state.todoTitle,
-                completed: false
+                id: todos.length + 1,
+                title: todoTitle,
+                completed: false,
+            };
+
+            setTodos((prevState) => [...prevState, newTodoObj]);
+            setTodoTitle('');
+        }
+    };
+
+    const removeTodo = (todoId) => {
+        let newTodos = todos.filter((todo) => todo.id !== todoId);
+        setTodos(newTodos);
+    };
+
+    const editTodo = (todoId) => {
+        let newTodos = todos.map((todo) => {
+            if (todo.id === todoId) {
+                return { ...todo, completed: !todo.completed };
             }
+            return todo;
+        });
+        setTodos(newTodos);
+    };
 
-            this.setState(prevState => ({
-                todos: [...prevState.todos, newTodoObj],
-                todoTitle: ''
-            }))
-        }
-    }
+    // فیلتر کردن لیست براساس وضعیت
+    const filteredTodos = todos.filter((todo) => {
+        if (status === 'completed') return todo.completed;
+        if (status === 'uncompleted') return !todo.completed;
+        return true;
+    });
 
-    removeTodo(todoId) {
-        let newTodos = this.state.todos.filter((todo) => todo.id !== todoId);
-        this.setState({ todos: newTodos });
-    }
-
-    editTodo(todoId) {
-        this.setState(prevState => ({
-            todos: prevState.todos.map(todo =>
-                todo.id === todoId ? { ...todo, completed: !todo.completed } : todo
-            )
-        }));
-    }
-
-    render() {
-        let filteredTodos = this.state.todos;
-        if (this.state.status === 'completed') {
-            filteredTodos = this.state.todos.filter(todo => todo.completed);
-        } else if (this.state.status === 'uncompleted') {
-            filteredTodos = this.state.todos.filter(todo => !todo.completed);
-        }
-
-        return (
-            <>
-                <Header />
-                <form onSubmit={this.addTodo}>
-                    <input 
-                        type="text" 
-                        className="todo-input" 
-                        maxLength="40" 
-                        value={this.state.todoTitle} 
-                        onChange={this.todoTitleHandler}
-                    />
-                    <button className="todo-button" type="submit">
-                        <i className="fas fa-plus-square"></i>
-                    </button>
-                    <div className="select">
-                        <select name="todos" className="filter-todo" onChange={this.statusHandler}>
-                            <option value="all">All</option>
-                            <option value="completed">Completed</option>
-                            <option value="uncompleted">Uncompleted</option>
-                        </select>
-                    </div>
-                </form>
-
-                <div className="todo-container">
-                    <ul className="todo-list">
-                        {filteredTodos.map(todo => (
-                            <Todo 
-                                key={todo.id} 
-                                {...todo} 
-                                onRemove={this.removeTodo} 
-                                onEdit={this.editTodo}
-                            />
-                        ))}
-                    </ul>
+    return (
+        <>
+            <Header />
+            <form onSubmit={addTodo}>
+                <input
+                    type="text"
+                    className="todo-input"
+                    maxLength="40"
+                    value={todoTitle}
+                    onChange={todoTitleHandler}
+                />
+                <button className="todo-button" type="submit">
+                    <i className="fas fa-plus-square"></i>
+                </button>
+                <div className="select">
+                    <select name="todos" className="filter-todo" onChange={statusHandler}>
+                        <option value="all">All</option>
+                        <option value="completed">Completed</option>
+                        <option value="uncompleted">Uncompleted</option>
+                    </select>
                 </div>
-            </>
-        )
-    }
+            </form>
+
+            <div className="todo-container">
+                <ul className="todo-list">
+                    {filteredTodos.map((todo) => (
+                        <Todo
+                            key={todo.id}
+                            {...todo}
+                            onRemove={removeTodo}
+                            onEdit={editTodo}
+                        />
+                    ))}
+                </ul>
+            </div>
+        </>
+    );
 }
